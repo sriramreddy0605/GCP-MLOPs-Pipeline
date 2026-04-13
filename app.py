@@ -1,7 +1,7 @@
 from flask import flask
 import os
 
-app=Flas(__name__)
+app=Flask(__name__)
 
 @app.route('/')
 def run_experiment():
