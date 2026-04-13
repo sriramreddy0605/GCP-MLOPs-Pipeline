@@ -1,11 +1,26 @@
 steps:
-# Step 1: Build the Docker image
+# 1. Build the container
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mlops-repo/mlops-experiment:latest', '.']
 
-# Step 2: Push the image to Artifact Registry
+# 2. Push the container
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/mlops-repo/mlops-experiment:latest']
+
+# 3. Deploy to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - 'mlops-service'
+  - '--image'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/mlops-repo/mlops-experiment:latest'
+  - '--region'
+  - 'us-central1'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
 
 images:
 - 'us-central1-docker.pkg.dev/$PROJECT_ID/mlops-repo/mlops-experiment:latest'

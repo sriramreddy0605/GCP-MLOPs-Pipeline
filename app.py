@@ -1,27 +1,31 @@
 from flask import Flask, request, jsonify
 import joblib
 import numpy as np
+import os
 
 app = Flask(__name__)
 
-# Load the model we trained in Phase 1
+# Load the model trained in experiment.py
 try:
     model = joblib.load('model.joblib')
-except:
+except Exception as e:
+    print(f"Model load failed: {e}")
     model = None
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if not model:
-        return jsonify({'error': 'Model not found. Please train the model first.'}), 500
+    if model is None:
+        return jsonify({'error': 'Model not loaded'}), 500
     
     data = request.get_json()
+    # Expecting JSON: {"input": [1, 2, 3, 4]}
     prediction = model.predict(np.array(data['input']).reshape(1, -1))
     return jsonify({'prediction': int(prediction[0])})
 
-@app.route('/health', methods=['GET'])
+@app.route('/', methods=['GET'])
 def health():
-    return jsonify({'status': 'healthy'})
+    return "MLOps API is Live!"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
