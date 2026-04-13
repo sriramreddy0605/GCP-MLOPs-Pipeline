@@ -1,9 +1,9 @@
 steps:
-# 1. Build the container
+# 1. Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/mlops-repo/mlops-experiment:latest', '.']
 
-# 2. Push the container
+# 2. Push to Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/mlops-repo/mlops-experiment:latest']
 
